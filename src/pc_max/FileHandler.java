@@ -30,9 +30,12 @@ public class FileHandler {
 
         File file = null;
 
+
+        Logger logger = new Logger(); //komunikaty, logi
+
         if(!new File(filePath).exists())
         {
-            // log/komunikat
+            logger.Log(1,"Plik nie istnieje");
             return false;
         }
 
@@ -40,7 +43,7 @@ public class FileHandler {
             file = new File(filePath);
         }
         catch (Exception e) {
-            // log/komuniakt
+            logger.Log(1,e.toString());
             return false;
         }
         finally {
@@ -59,13 +62,13 @@ public class FileHandler {
                 tasksNum = Integer.parseInt(line);
 
                 //odczytanie czasów zadań
-                for(int i = 0; i <= tasksNum; i++) {
+                for(int i = 0; i < tasksNum; i++) {
                     line = reader.readLine();
                     tasks.add(Integer.parseInt(line));
                 }
             }
             catch(Exception e) {
-                // log/komuniakt
+                logger.Log(1,e.toString());
                 return false;
             }
             finally {
