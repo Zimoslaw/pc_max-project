@@ -17,9 +17,9 @@ public class Main {
         logger.Log(11,tasks.size());
 
         logger.Log(12,"");
+
         for (int t:tasks) {
             System.out.println(t);
         }
-
     }
 }

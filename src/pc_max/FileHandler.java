@@ -30,6 +30,7 @@ public class FileHandler {
 
         File file = null;
 
+
         Logger logger = new Logger(); //komunikaty, logi
 
         if(!new File(filePath).exists())
