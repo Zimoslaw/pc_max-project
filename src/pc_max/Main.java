@@ -1,5 +1,6 @@
 package pc_max;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
@@ -8,18 +9,25 @@ public class Main {
 
         FileHandler fileHandler = new FileHandler(); //dane problemu
         Logger logger = new Logger(); //komunikaty, logi
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); //wczytywanie inputu
+        String filePath; //ścieżka do pliku z problemem
 
-        fileHandler.getProblem("C:\\Users\\Zimek\\Desktop\\test.txt");
+        System.out.println("Podaj ścieżkę pliku:");
 
-        logger.Log(10,fileHandler.getProcessors());
+        filePath = reader.readLine();
 
-        ArrayList<Integer> tasks = fileHandler.getTasks();
-        logger.Log(11,tasks.size());
+        if(fileHandler.getProblem(filePath))
+        {
+            logger.Log(10,fileHandler.getProcessors());
 
-        logger.Log(12,"");
+            ArrayList<Integer> tasks = fileHandler.getTasks();
+            logger.Log(11,tasks.size());
 
-        for (int t:tasks) {
-            System.out.println(t);
+            logger.Log(12,"");
+
+            for (int t:tasks) {
+                System.out.println(t);
+            }
         }
     }
 }
