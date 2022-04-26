@@ -1,6 +1,9 @@
 package pc_max;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main {
     
@@ -10,15 +13,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-<<<<<<< Updated upstream
-        FileHandler fileHandler = new FileHandler();
-
-        fileHandler.getProblem("C:\\Users\\Zimek\\Desktop\\test.txt");
-        System.out.println(fileHandler.getProcessors());
-        ArrayList<Integer> tasks = fileHandler.getTasks();
-        for (int t:tasks) {
-            System.out.println(t);
-=======
         FileHandler fileHandler = new FileHandler(); //dane problemu
         Logger logger = new Logger(); //komunikaty, logi
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); //wczytywanie inputu
@@ -43,42 +37,51 @@ public class Main {
                 System.out.println(t);
             }*/
             
-            Greedy();
+            LPT();
             logger.Log(13, Tmax); //Wydrukowanie wyniku
->>>>>>> Stashed changes
         }
 
     }
 
     /**
-     * Algorytm zachłanny
+     * Algorytm zachłanny LPT
      */
-    private static void Greedy() {
+    private static void LPT() {
         Logger logger = new Logger();
         int[][] T = new int[procNum][tasks.size()];
-            
-            int procI = 0;
-            int taskI = 0;
+
+        tasks.sort(Comparator.reverseOrder());
+
+            int Pmin; //obecny procesor z najmniejszym czasem wykonania ostatniego zadania
+            int Tmin = 0; //czas wykonania ostatniego zadania powyższego procesora
             for(int t:tasks) {
-                for(int i = 0; i < tasks.size(); i++)
-                    if(T[procI][i] == 0)
+                Pmin = 0;
+                for(int p = 0; p < procNum; p++) { //znajdź najmniej obciążony procesor
+                    int sum = 0;
+                    for(int i = 0; i < tasks.size(); i++) //oblicz czas wykonania ostatniego zadania
+                        sum += T[p][i];
+                    if(p == 0)
+                        Tmin = sum;
+                    else if(sum < Tmin)
                     {
-                        T[procI][i] = t;
+                        Pmin = p;
+                        Tmin = sum;
+                    }
+                }
+
+                for(int i = 0; i < tasks.size(); i++) { //przypisanie zadania do procesora
+                    if (T[Pmin][i] == 0) {
+                        T[Pmin][i] = t;
                         break;
-                    } 
-                        
-                procI++;
-                if(procI == procNum) {
-                    procI = 0;
-                    taskI = 0;
+                    }
                 }
             }
             
-            for(int i = 0; i < procNum; i++) {
+            for(int i = 0; i < procNum; i++) { //obliczanie czasu wykonania ostatniego zadania wszystkich procesorów
                 int sum = 0;
                 for(int j = 0; j < tasks.size(); j++)
                     sum += T[i][j];
-                logger.Log(0,sum);
+                //logger.Log(0,sum);
                 if(sum > Tmax)
                     Tmax = sum;
             }

@@ -53,7 +53,7 @@ public class Logger {
                 err = "Czasy zadań";
                 break;
             case 13:
-                err = "Wynik:";
+                err = "Wynik";
                 break;
             default:
                 err = "Nieznany błąd";
