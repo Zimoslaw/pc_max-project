@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 public class Main {
     
     static int procNum = 0; //Liczba procesorów
+    static ArrayList<Processor> processors; //lista procesorów
     static ArrayList<Integer> tasks; //Lista czasów wszystkich zadań
     static int Tmax = 0; //Czas wykonania ostatniego zadania
 
@@ -26,7 +27,8 @@ public class Main {
         if(fileHandler.getProblem(filePath)) //wczytywanie problemu
         {
             procNum = fileHandler.getProcessors();
-            logger.Log(10,procNum);
+            createProcessors(procNum);
+            logger.Log(10,processors.size());
 
             tasks = fileHandler.getTasks();
             logger.Log(11,tasks.size());
@@ -38,9 +40,20 @@ public class Main {
             }*/
             
             LPT();
-            logger.Log(13, Tmax); //Wydrukowanie wyniku
+            logger.Log(13, "(LPT): "+Tmax); //Wydrukowanie wyniku
         }
 
+    }
+
+    /**
+     * Tworzenie listy pustych procesorów
+     * @param processorNum liczba procesorów do stworzenia
+     */
+    private static void createProcessors(int processorNum) {
+        processors = new ArrayList<>();
+        for(int i = 0; i < processorNum; i++) {
+            processors.add(new Processor());
+        }
     }
 
     /**
@@ -48,42 +61,28 @@ public class Main {
      */
     private static void LPT() {
         Logger logger = new Logger();
-        int[][] T = new int[procNum][tasks.size()];
 
         tasks.sort(Comparator.reverseOrder());
 
-            int Pmin; //obecny procesor z najmniejszym czasem wykonania ostatniego zadania
+            Processor Pmin = processors.get(0); //obecny procesor z najmniejszym czasem wykonania ostatniego zadania
             int Tmin = 0; //czas wykonania ostatniego zadania powyższego procesora
             for(int t:tasks) {
-                Pmin = 0;
-                for(int p = 0; p < procNum; p++) { //znajdź najmniej obciążony procesor
-                    int sum = 0;
-                    for(int i = 0; i < tasks.size(); i++) //oblicz czas wykonania ostatniego zadania
-                        sum += T[p][i];
-                    if(p == 0)
-                        Tmin = sum;
-                    else if(sum < Tmin)
+                for(Processor p:processors) { //znajdź najmniej obciążony procesor
+                    if(p.getTotalTime() < Tmin)
                     {
                         Pmin = p;
-                        Tmin = sum;
+                        Tmin = p.getTotalTime();
                     }
                 }
 
-                for(int i = 0; i < tasks.size(); i++) { //przypisanie zadania do procesora
-                    if (T[Pmin][i] == 0) {
-                        T[Pmin][i] = t;
-                        break;
-                    }
-                }
+                Pmin.addTask(t);
+                Tmin = Pmin.getTotalTime();
             }
-            
-            for(int i = 0; i < procNum; i++) { //obliczanie czasu wykonania ostatniego zadania wszystkich procesorów
-                int sum = 0;
-                for(int j = 0; j < tasks.size(); j++)
-                    sum += T[i][j];
-                //logger.Log(0,sum);
-                if(sum > Tmax)
-                    Tmax = sum;
+
+            for(Processor p : processors) {  //obliczanie czasu wykonania ostatniego zadania wszystkich procesorów
+                if(p.getTotalTime() > Tmax) {
+                    Tmax = p.getTotalTime();
+                }
             }
     }
 }
