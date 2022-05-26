@@ -2,6 +2,8 @@ package pc_max;
 
 import java.util.ArrayList;
 
+import static pc_max.Main.tabuLvl;
+
 /**
  * Klasa implementująca procesor
  *
@@ -9,6 +11,7 @@ import java.util.ArrayList;
  */
 public class Processor {
     ArrayList<Integer> tasks; //lista zadań przypisanych do procesora
+    int isTabu = 0; //poziom tabu. Jeżeli 0 - nie jest tabu.
 
     public Processor() {
         tasks = new ArrayList<>();
@@ -36,6 +39,22 @@ public class Processor {
      */
     public void removeTask(int index) {
         tasks.remove(index);
+    }
+
+    /**
+     * Zwraca poziom tabu
+     * @return aktualny poziom tabu (ile kroków jeszcze będzie tabu)
+     */
+    public int getTabu() { return isTabu; }
+
+    /**
+     * Ustawia tabu porcesora na domyślny poziom
+     */
+    public void setTabu() { isTabu = tabuLvl;}
+
+    public void lowerTabu() {
+        if (isTabu > 0)
+            isTabu--;
     }
 
     /**

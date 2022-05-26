@@ -9,8 +9,11 @@ import java.io.InputStreamReader;
 public class Main {
     
     static int procNum = 0; //Liczba procesorów
+    static int tabuLvl = 3; //Ile kroków utrzymuje się tabu (poziom tabu)
+
     static ArrayList<Processor> processors; //lista procesorów
     static ArrayList<Integer> tasks; //Lista czasów wszystkich zadań
+
     static int Tmax = 0; //Czas wykonania ostatniego zadania
 
     public static void main(String[] args) throws Exception {
@@ -40,8 +43,11 @@ public class Main {
                 System.out.println(t);
             }*/
             
-            LPT();
-            logger.Log(13, "(LPT): "+Tmax); //Wydrukowanie wyniku
+            //LPT();
+            Tabu();
+            Tmax = getTimeOfLastTask(); //obliczenie wyniku
+            //logger.Log(13, "(LPT): "+Tmax); //Wydrukowanie wyniku LPT
+            logger.Log(13, "(Tabu): "+Tmax); //Wydrukowanie wyniku algorytmu Tabu
         }
     }
 
@@ -54,6 +60,16 @@ public class Main {
         for(int i = 0; i < processorNum; i++) {
             processors.add(new Processor());
         }
+    }
+
+    private static int getTimeOfLastTask() {
+        int max = 0;
+        for(Processor p : processors) {
+            if(p.getTotalTime() > max) {
+                max = p.getTotalTime();
+            }
+        }
+        return max;
     }
 
     /**
@@ -78,11 +94,47 @@ public class Main {
                 Pmin.addTask(t);
                 Tmin = Pmin.getTotalTime();
             }
+    }
 
-            for(Processor p : processors) {  //obliczanie czasu wykonania ostatniego zadania wszystkich procesorów
-                if(p.getTotalTime() > Tmax) {
-                    Tmax = p.getTotalTime();
+    private static void Tabu() {
+        Logger logger = new Logger();
+
+        tasks.sort(Comparator.reverseOrder());
+        int lastOpportunity = 0;
+
+        for(int t:tasks) {
+            int currentTimeOfLastTask = getTimeOfLastTask(); //czas wykonaia się wszystkich zadań dla obecnego kroku
+            int maxOpportunity = -Integer.MIN_VALUE; //największa korzyść
+            int indexOfChosenProc = 0; //procesor do którego przydzielone będzie zadanie na końcu kroku
+
+            for(Processor p : processors)
+            {
+                int opportunity = currentTimeOfLastTask - (p.getTotalTime() + t); //oblicz korzyść procesora
+                if(opportunity > maxOpportunity) {
+                    if(p.getTabu() == 0) {
+                        indexOfChosenProc = processors.indexOf(p);
+                        maxOpportunity = opportunity;
+                        lastOpportunity = opportunity;
+                    }
+                    else {
+                        if(opportunity > 25)
+                        {
+                            indexOfChosenProc = processors.indexOf(p);
+                            maxOpportunity = opportunity;
+                            lastOpportunity = opportunity;
+                        }
+                    }
                 }
             }
+
+            for(Processor p : processors) //obniżenie poziomu tabu na końcu kroku
+            {
+                p.lowerTabu();
+            }
+
+            processors.get(indexOfChosenProc).addTask(t); //przypisz zadanie do procesora z największą korzyścią
+            processors.get(indexOfChosenProc).setTabu(); //oznacz go jako tabu
+        }
+
     }
 }
