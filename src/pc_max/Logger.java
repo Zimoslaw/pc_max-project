@@ -44,19 +44,19 @@ public class Logger {
                 break;
             //-----Info-----
             case 10:
-                err = "Liczba procesorów";
+                err = "Liczba procesorow";
                 break;
             case 11:
-                err = "Liczba zadań";
+                err = "Liczba zadan";
                 break;
             case 12:
-                err = "Czasy zadań";
+                err = "Czasy zadan";
                 break;
             case 13:
                 err = "Wynik";
                 break;
             default:
-                err = "Nieznany błąd";
+                err = "Nieznany blad";
                 break;
         }
 
